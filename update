@@ -1,0 +1,35 @@
+#!/bin/bash
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+echo "STARTING UPDATE"
+apt update -y &> /dev/null
+if [ $? -eq 0 ]; then
+    echo "SUCCEEDED TO SEARCH UPDATED PACKAGES"
+else
+    echo "FAILED TO SEARCH UPDATED PACKAGES"
+    exit 1
+fi
+apt dist-upgrade -y &> /dev/null
+if [ $? -eq 0 ]; then
+    echo "SUCCEEDED UPDATING DISTRO"
+else
+    echo "FAILED UPDATING DISTRO"
+    exit 1
+fi
+apt upgrade -y &> /dev/null
+if [ $? -eq 0 ]; then
+    echo "SUCCEEDED UPDATING PACKAGES"
+else
+    echo "FAILED UPDATING PACKAGES"
+    exit 1
+fi
+apt autoremove -y &> /dev/null
+if [ $? -eq 0 ]; then
+    echo "SUCCEEDED REMOVING OLD FILES"
+else
+    echo "FAILED REMOVING OLD FILES"
+    exit 1
+fi
+echo "DONE UPDATING SYSTEM"
