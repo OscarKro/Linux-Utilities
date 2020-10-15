@@ -5,4 +5,5 @@ if [ "$EUID" -ne 0 ]
 fi
 
 cp ./mcmr /usr/bin/
+cp ./run_with_dots /usr/bin/
 cp ./update /usr/bin/

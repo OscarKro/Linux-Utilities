@@ -57,7 +57,7 @@ fi
 
 echo "starting update"
 echo "searching for packages that need updating..."
-$packagemanager $updateflaak $yesflaak &> $logfile 
+run_with_dots $packagemanager $updateflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded to search updated packages"
 else
@@ -65,7 +65,7 @@ else
     exit 1
 fi
 echo "busy updating distro..."
-$packagemanager $distupgradeflaak $yesflaak &> $logfile 
+run_with_dots $packagemanager $distupgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded updating distro"
 else
@@ -73,7 +73,7 @@ else
     exit 1
 fi
 echo "busy updating packages..."
-$packagemanager $upgradeflaak $yesflaak &> $logfile 
+run_with_dots $packagemanager $upgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded updating packages"
 else
@@ -81,7 +81,7 @@ else
     exit 1
 fi
 echo "busy removing old packages and files..."
-$packagemanager $autoremoveflaak $yesflaak  &> $logfile 
+run_with_dots $packagemanager $autoremoveflaak $yesflaak  &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded removing old files"
 else
