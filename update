@@ -1,31 +1,63 @@
 #!/bin/bash
+
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
   exit
 fi
+packagemanager="NONE"
+updateflaak=""
+yesflaak=""
+distupgradeflaak=""
+upgradeflaak=""
+autoremoveflaak=""
+lsb_release -i | grep -q "Ubuntu" &> /dev/null
+if [ $? -eq 0 ]; then
+   echo "DISTRO IS UBUNTU"
+   packagemanager="apt"
+   updateflaak="update"
+   yesflaak="-y"
+   distupgradeflaak="dist-upgrade"
+   upgradeflaak="upgrade"
+   autoremoveflaak="autoremove"
+fi
+lsb_release -i | grep -q "Arch" &> /dev/null
+if [ $? -eq 0 ]; then
+   echo "DISTRO IS ARCH"
+    packagemanager="pacman" 
+    updateflaak="-Syyu"
+    yesflaak="--no-confirm"
+    distupgradeflaak=$updateflaak
+    upgradeflaak=$updateflaak
+    autoremoveflaak="-Qdtq | pacman -Rs -"
+fi
+
+if [ $packagemanager == "NONE" ]; then
+   echo "DISTRO NOT SUPPORTED"
+   exit 1
+fi
 echo "STARTING UPDATE"
-apt update -y &> /dev/null
+$packagemanager $updateflaak $yesflaak &> /dev/null
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED TO SEARCH UPDATED PACKAGES"
 else
     echo "FAILED TO SEARCH UPDATED PACKAGES"
     exit 1
 fi
-apt dist-upgrade -y &> /dev/null
+$packagemanager $distupgradeflaak $yesflaak &> /dev/null
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED UPDATING DISTRO"
 else
     echo "FAILED UPDATING DISTRO"
     exit 1
 fi
-apt upgrade -y &> /dev/null
+$packagemanager $upgradeflaak $yesflaak &> /dev/null
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED UPDATING PACKAGES"
 else
     echo "FAILED UPDATING PACKAGES"
     exit 1
 fi
-apt autoremove -y &> /dev/null
+$packagemanager $autoremoveflaak $yesflaak  &> /dev/null
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED REMOVING OLD FILES"
 else
