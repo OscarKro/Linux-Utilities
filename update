@@ -17,6 +17,7 @@ echo "[Log Start]" > $logfile
 
 lsb_release -i | grep -q "Ubuntu" &> $logfile 
 if [ $? -eq 0 ]; then
+   echo "=============================================="
    echo "distro is Ubuntu"
    packagemanager="apt"
    updateflaak="update"
@@ -27,6 +28,7 @@ if [ $? -eq 0 ]; then
 fi
 lsb_release -i | grep -q "Arch" &> $logfile 
 if [ $? -eq 0 ]; then
+   echo "=============================================="
    echo "distro is Arch"
     packagemanager="pacman" 
     updateflaak="-Syyu"
@@ -38,6 +40,7 @@ fi
 
 lsb_release -i | grep -q "Manjaro" &> $logfile 
 if [ $? -eq 0 ]; then
+   echo "=============================================="
    echo "distro is Manjaro"
     packagemanager="pacman" 
     updateflaak="-Syyu"
@@ -53,6 +56,7 @@ if [ $packagemanager == "NONE" ]; then
 fi
 
 echo "starting update"
+echo "searching for packages that need updating..."
 $packagemanager $updateflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded to search updated packages"
@@ -60,6 +64,7 @@ else
     echo "failed to search updated packages"
     exit 1
 fi
+echo "busy updating distro..."
 $packagemanager $distupgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded updating distro"
@@ -67,6 +72,7 @@ else
     echo "failed updating distro"
     exit 1
 fi
+echo "busy updating packages..."
 $packagemanager $upgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded updating packages"
@@ -74,6 +80,7 @@ else
     echo "failed updating packages"
     exit 1
 fi
+echo "busy removing old packages and files..."
 $packagemanager $autoremoveflaak $yesflaak  &> $logfile 
 if [ $? -eq 0 ]; then
     echo "succeeded removing old files"
@@ -82,3 +89,4 @@ else
     exit 1
 fi
 echo "done updating system"
+echo "=============================================="
