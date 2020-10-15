@@ -1,3 +1,4 @@
+#!/bin/bash
 make clean
 make run
 arm-none-eabi-objdump -D main.elf > main.txt

@@ -17,7 +17,7 @@ echo "[Log Start]" > $logfile
 
 lsb_release -i | grep -q "Ubuntu" &> $logfile 
 if [ $? -eq 0 ]; then
-   echo "DISTRO IS UBUNTU"
+   echo "distro is Ubuntu"
    packagemanager="apt"
    updateflaak="update"
    yesflaak="-y"
@@ -27,7 +27,18 @@ if [ $? -eq 0 ]; then
 fi
 lsb_release -i | grep -q "Arch" &> $logfile 
 if [ $? -eq 0 ]; then
-   echo "DISTRO IS ARCH"
+   echo "distro is Arch"
+    packagemanager="pacman" 
+    updateflaak="-Syyu"
+    yesflaak="--noconfirm"
+    distupgradeflaak=$updateflaak
+    upgradeflaak=$updateflaak
+    autoremoveflaak="-Qtdq " # Lists packages but doesn't remove them
+fi
+
+lsb_release -i | grep -q "Manjaro" &> $logfile 
+if [ $? -eq 0 ]; then
+   echo "distro is Manjaro"
     packagemanager="pacman" 
     updateflaak="-Syyu"
     yesflaak="--noconfirm"
@@ -37,36 +48,37 @@ if [ $? -eq 0 ]; then
 fi
 
 if [ $packagemanager == "NONE" ]; then
-   echo "DISTRO NOT SUPPORTED"
+   echo "distro is not supported"
    exit 1
 fi
-echo "STARTING UPDATE"
+
+echo "starting update"
 $packagemanager $updateflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "SUCCEEDED TO SEARCH UPDATED PACKAGES"
+    echo "succeeded to search updated packages"
 else
-    echo "FAILED TO SEARCH UPDATED PACKAGES"
+    echo "failed to search updated packages"
     exit 1
 fi
 $packagemanager $distupgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "SUCCEEDED UPDATING DISTRO"
+    echo "succeeded updating distro"
 else
-    echo "FAILED UPDATING DISTRO"
+    echo "failed updating distro"
     exit 1
 fi
 $packagemanager $upgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "SUCCEEDED UPDATING PACKAGES"
+    echo "succeeded updating packages"
 else
-    echo "FAILED UPDATING PACKAGES"
+    echo "failed updating packages"
     exit 1
 fi
 $packagemanager $autoremoveflaak $yesflaak  &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "SUCCEEDED REMOVING OLD FILES"
+    echo "succeeded removing old files"
 else
-    echo "FAILED REMOVING OLD FILES"
+    echo "failed removing old files"
     exit 1
 fi
-echo "DONE UPDATING SYSTEM"
+echo "done updating system"
