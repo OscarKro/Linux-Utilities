@@ -10,7 +10,12 @@ yesflaak=""
 distupgradeflaak=""
 upgradeflaak=""
 autoremoveflaak=""
-lsb_release -i | grep -q "Ubuntu" &> /dev/null
+
+logfile="/var/log/vo-utilities.log"
+echo "[Log Start]" > $logfile
+
+
+lsb_release -i | grep -q "Ubuntu" &> $logfile 
 if [ $? -eq 0 ]; then
    echo "DISTRO IS UBUNTU"
    packagemanager="apt"
@@ -20,15 +25,15 @@ if [ $? -eq 0 ]; then
    upgradeflaak="upgrade"
    autoremoveflaak="autoremove"
 fi
-lsb_release -i | grep -q "Arch" &> /dev/null
+lsb_release -i | grep -q "Arch" &> $logfile 
 if [ $? -eq 0 ]; then
    echo "DISTRO IS ARCH"
     packagemanager="pacman" 
     updateflaak="-Syyu"
-    yesflaak="--no-confirm"
+    yesflaak="--noconfirm"
     distupgradeflaak=$updateflaak
     upgradeflaak=$updateflaak
-    autoremoveflaak="-Qdtq | pacman -Rs -"
+    autoremoveflaak="-Qtdq " # Lists packages but doesn't remove them
 fi
 
 if [ $packagemanager == "NONE" ]; then
@@ -36,28 +41,28 @@ if [ $packagemanager == "NONE" ]; then
    exit 1
 fi
 echo "STARTING UPDATE"
-$packagemanager $updateflaak $yesflaak &> /dev/null
+$packagemanager $updateflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED TO SEARCH UPDATED PACKAGES"
 else
     echo "FAILED TO SEARCH UPDATED PACKAGES"
     exit 1
 fi
-$packagemanager $distupgradeflaak $yesflaak &> /dev/null
+$packagemanager $distupgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED UPDATING DISTRO"
 else
     echo "FAILED UPDATING DISTRO"
     exit 1
 fi
-$packagemanager $upgradeflaak $yesflaak &> /dev/null
+$packagemanager $upgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED UPDATING PACKAGES"
 else
     echo "FAILED UPDATING PACKAGES"
     exit 1
 fi
-$packagemanager $autoremoveflaak $yesflaak  &> /dev/null
+$packagemanager $autoremoveflaak $yesflaak  &> $logfile 
 if [ $? -eq 0 ]; then
     echo "SUCCEEDED REMOVING OLD FILES"
 else
