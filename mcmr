@@ -1,4 +1,51 @@
 #!/bin/bash
+echo "======================================================================="
+while test $# != 0
+do
+	case $1 in
+	-h|-\?|--help)
+	echo "mcmr [options] [file1] [file2]"
+	echo "This program runs make clean and make run. It saves you some typing. You can also give an option to it to create an object dump from a .elf"
+	echo "Options:"
+	echo "-o : create object dump from file 1 to file 2. notice that file 1 needs to to be a .elf"
+	echo "======================================================================="
+	exit 0
+	;;
+	-o|-O)
+	if [ "$#" -ne 3 ]; then
+		echo "Input and output file is needed with the -o option"
+		echo "======================================================================="
+		exit 1
+	fi
+	make clean
+	make build
+	if [ -f "$2" ]; then
+		if ! command -v objdump --help &> /dev/null
+		then
+		echo "The binairy 'objdump' could not be found, no object dump created. Install this package first"
+		make run
+		echo "======================================================================="
+		exit 0
+		else
+		echo "creating object dump from $2 to $3"
+		objdump -x $2 > $3
+		echo "done"
+		make run
+		echo "======================================================================="
+		exit 0
+		fi
+	else
+		echo "$2 is not an existing file. No objectdump created"
+		make run
+		echo "======================================================================="
+		exit 0
+	fi
+	break
+	;;
+	esac
+done 
+
 make clean
 make run
-arm-none-eabi-objdump -D main.elf > main.txt
+echo "======================================================================="
+
