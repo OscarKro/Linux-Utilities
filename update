@@ -10,15 +10,24 @@ yesflaak=""
 distupgradeflaak=""
 upgradeflaak=""
 autoremoveflaak=""
-
 logfile="/var/log/vo-utilities.log"
 echo "[Log Start]" > $logfile
 
+showStatus(){
+    newline="\n"
+    if [[ $2 == "silent" ]]; then
+	newline=""
+    fi 
+    dt=$(date '+%H:%M:%S.%3N');
+    echo -n -e "$dt Update > $1$newline"
+}
 
+
+echo "=============================================="
+showStatus "Detecting Distro..."
 lsb_release -i | grep -q "Ubuntu" &> $logfile 
 if [ $? -eq 0 ]; then
-   echo "=============================================="
-   echo "distro is Ubuntu"
+   showStatus "Distro detected: Ubuntu"
    packagemanager="apt"
    updateflaak="update"
    yesflaak="-y"
@@ -28,9 +37,8 @@ if [ $? -eq 0 ]; then
 fi
 lsb_release -i | grep -q "Arch" &> $logfile 
 if [ $? -eq 0 ]; then
-   echo "=============================================="
-   echo "distro is Arch"
-    packagemanager="pacman" 
+   showStatus "Distro detected: Arch"
+   packagemanager="pacman" 
     updateflaak="-Syyu"
     yesflaak="--noconfirm"
     distupgradeflaak=$updateflaak
@@ -40,9 +48,8 @@ fi
 
 lsb_release -i | grep -q "Manjaro" &> $logfile 
 if [ $? -eq 0 ]; then
-   echo "=============================================="
-   echo "distro is Manjaro"
-    packagemanager="pacman" 
+   showStatus "Distro detected: Manjaro"
+   packagemanager="pacman" 
     updateflaak="-Syyu"
     yesflaak="--noconfirm"
     distupgradeflaak=$updateflaak
@@ -52,41 +59,45 @@ fi
 
 if [ $packagemanager == "NONE" ]; then
    echo "distro is not supported"
+    showStatus "Unsupported distro detected. Closing..."
    exit 1
 fi
 
-echo "starting update"
-echo "searching for packages that need updating..."
+showStatus "Starting update"
+showStatus "Searching for packages that need updating" "silent"
 run_with_dots $packagemanager $updateflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "succeeded to search updated packages"
+    showStatus "Succeeded to search updated packages"
 else
-    echo "failed to search updated packages"
+    showStatus "Failed to search updated packages"
     exit 1
 fi
-echo "busy updating distro..."
+
+
+showStatus "Updating distro" "silent"
 run_with_dots $packagemanager $distupgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "succeeded updating distro"
+    showStatus "Succeeded updating distro"
 else
-    echo "failed updating distro"
+    showStatus "Failed updating distro. Closing..."
     exit 1
 fi
-echo "busy updating packages..."
+
+showStatus "Updating packages" "silent"
 run_with_dots $packagemanager $upgradeflaak $yesflaak &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "succeeded updating packages"
+    showStatus "Succeeded updating packages"
 else
-    echo "failed updating packages"
+    showStatus "Failed updating packages. Closing..."
     exit 1
 fi
-echo "busy removing old packages and files..."
+showStatus "Removing old packages and files" "silent"
 run_with_dots $packagemanager $autoremoveflaak $yesflaak  &> $logfile 
 if [ $? -eq 0 ]; then
-    echo "succeeded removing old files"
+    showStatus "Succeeded removing old files"
 else
-    echo "failed removing old files"
+    showStatus "Failed removing old files. Closing..."
     exit 1
 fi
-echo "done updating system"
+showStatus "System update successful."
 echo "=============================================="

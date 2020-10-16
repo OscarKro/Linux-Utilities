@@ -4,6 +4,11 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+echo "Installing..."
+
+
 cp ./mcmr /usr/bin/
 cp ./run_with_dots /usr/bin/
 cp ./update /usr/bin/
+
+echo "Successfully Installed!"
