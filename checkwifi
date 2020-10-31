@@ -4,7 +4,7 @@ maxattempts=50
 attempts=0
 
 if [ "$#" -ne 1 ]; then
-    maxattempts = $1
+    maxattempts=$1
 fi
 
 
