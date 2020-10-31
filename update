@@ -39,22 +39,22 @@ lsb_release -i | grep -q "Arch" &> $logfile
 if [ $? -eq 0 ]; then
    showStatus "Distro detected: Arch"
    packagemanager="pacman" 
-    updateflaak="-Syyu"
+    updateflaak="-Syy"
     yesflaak="--noconfirm"
-    distupgradeflaak=$updateflaak
-    upgradeflaak=$updateflaak
-    autoremoveflaak="-Qtdq " # Lists packages but doesn't remove them
+    distupgradeflaak="-Syyu"
+    upgradeflaak="-Syyu"
+    autoremoveflaak="-Rns \$(pacman -Qtdq)" 
 fi
 
 lsb_release -i | grep -q "Manjaro" &> $logfile 
 if [ $? -eq 0 ]; then
    showStatus "Distro detected: Manjaro"
    packagemanager="pacman" 
-    updateflaak="-Syyu"
+    updateflaak="-Syy"
     yesflaak="--noconfirm"
-    distupgradeflaak=$updateflaak
-    upgradeflaak=$updateflaak
-    autoremoveflaak="-Qtdq " # Lists packages but doesn't remove them
+    distupgradeflaak="-Syyu"
+    upgradeflaak="-Syyu"
+    autoremoveflaak="-Rns \$(pacman -Qtdq)" 
 fi
 
 if [ $packagemanager == "NONE" ]; then
