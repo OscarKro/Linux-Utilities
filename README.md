@@ -17,6 +17,7 @@ Simply run your desired program.
 |------|------------|
 | Update | Updates your system and cleans up orphans|
 | mcmr | Runs make clean and make run | 
+| checkwifi | Waits until you have a connection and notifies you | 
 
 ## Contributing
 You are welcome to contribute. Simply fork this repo, add one or more branches for your feature(s) or change(s) and create a pull request when you're finished.
