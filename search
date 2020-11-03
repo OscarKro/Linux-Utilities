@@ -1,0 +1,66 @@
+#!/bin/bash
+
+showHelp=false
+argc=0
+foruser="none"
+useroption=""
+location="/"
+# Parse command line arguments with getopts
+while getopts u:l:h flag; do
+    case "${flag}" in
+    h) showHelp=true ;;
+    u)
+        foruser=${OPTARG}
+        argc=$argc+2 # Arg count is actually 2 here, because it required input. I.e. -l <location>
+        ;;
+    l)
+        location=${OPTARG}
+        argc=$argc+2 # Arg count is actually 2 here, because it required input. I.e. -l <location>
+        ;;
+    esac
+done
+
+# Remove cli flags from $@
+i=$argc
+while [[ $i -gt 0 ]]; do
+    shift
+    i=$i-1
+done
+
+# Show help page if 'h' flag is set
+if [[ $showHelp == true ]]; then
+    echo "Syntax: search [options] <file>"
+    echo "  options:"
+    echo "   -h                Shows this help menu."
+    echo "   -u <user>         Only search for files with the specified owner."
+    echo "   -l <location>     Search from the following location."
+    echo
+    exit 0
+fi
+
+# Check if root
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit 1
+fi
+
+# If the user variable is set, add it to the options
+if [[ $foruser -ne "none" ]]; then
+    useroption="-user $foruser"
+fi
+
+# Find actual matches and store in cache
+echo "Search > Searching for $@..."
+sudo find $location -name $useroption $@ 2>/dev/null > ~/.searchcache
+
+# Count results from cache and store in 'ADDR' - Keep in mind that wc also returns the filename. Here we split the result based on the space delimiter and then store the result in addr.
+resultcount=`wc -l ~/.searchcache`
+IFS=' '
+read -ra ADDR <<< "$resultcount" # str is read into an array as tokens separated by IFS
+
+# Print results and amount of results.
+sudo cat ~/.searchcache 
+echo "Search > Complete. Found $ADDR matches!"
+
+# Remove cache
+rm ~/.searchcache

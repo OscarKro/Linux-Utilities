@@ -12,5 +12,6 @@ cp ./mcmr /usr/bin/
 cp ./run_with_dots /usr/bin/
 cp ./update /usr/bin/
 cp ./checkwifi /usr/bin/ 
+cp ./search /usr/bin 
 
 echo "Successfully Installed!"
