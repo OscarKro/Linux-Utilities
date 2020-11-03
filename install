@@ -6,6 +6,7 @@ fi
 
 echo "Installing..."
 
+cd "$(dirname "$0")"
 
 cp ./mcmr /usr/bin/
 cp ./run_with_dots /usr/bin/
