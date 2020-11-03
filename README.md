@@ -15,9 +15,10 @@ Simply run your desired program.
 ## List of programs
 | Name | Description |
 |------|------------|
-| Update | Updates your system and cleans up orphans|
+| update | Updates your system and cleans up orphans|
 | mcmr | Runs make clean and make run | 
 | checkwifi | Waits until you have a connection and notifies you | 
+| search | Search for a file |
 
 ## Contributing
 You are welcome to contribute. Simply fork this repo, add one or more branches for your feature(s) or change(s) and create a pull request when you're finished.
