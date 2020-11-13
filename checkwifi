@@ -22,6 +22,7 @@ doPing(){
 
     if [ $? -eq 0 ]; then
         showStatus "Connected!"
+	exit 0
     else
 	if [[ $maxattempts -eq -1 ]]; then 
 	    sleep 1 
