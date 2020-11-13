@@ -2,11 +2,9 @@
 
 maxattempts=-1
 attempts=0
-
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 0 ]; then
     maxattempts=$1
 fi
-
 
 showStatus(){
     newline="\n"
@@ -25,7 +23,7 @@ doPing(){
     if [ $? -eq 0 ]; then
         showStatus "Connected!"
     else
-	if [[ $maxattempts == -1]]; then 
+	if [[ $maxattempts -eq -1 ]]; then 
 	    sleep 1 
 	    doPing 
 	fi 
