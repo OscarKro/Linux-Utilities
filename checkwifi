@@ -1,6 +1,6 @@
 #!/bin/bash
 
-maxattempts=50
+maxattempts=-1
 attempts=0
 
 if [ "$#" -ne 1 ]; then
@@ -25,11 +25,16 @@ doPing(){
     if [ $? -eq 0 ]; then
         showStatus "Connected!"
     else
+	if [[ $maxattempts == -1]]; then 
+	    sleep 1 
+	    doPing 
+	fi 
           ((attempts=attempts+1))
         if [[ $attempts -gt $maxattempts ]]; then
             showStatus "Failed to connect" 
             exit 1
         fi
+	sleep 1
         doPing
     fi
 }
